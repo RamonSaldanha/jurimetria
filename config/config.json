@@ -1,0 +1,28 @@
+{
+  "webhook": {
+    "url": "https://app.advable.com.br/api/webhook/movements/create"
+  },
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "crawler",
+    "host": "127.0.0.1",
+    "dialect": "sqlite",
+    "storage": "data.sqlite",
+    "logging": false
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "crawler",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "crawler",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
