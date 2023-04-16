@@ -1,20 +1,64 @@
 const e = require('connect-flash');
 const { Sentence } = require('../models');
 const { validationResult } = require('express-validator');
+const Sequelize = require('sequelize');
 
 
 module.exports = function(app) {
 
 	this.dashboard = function(req, res) {
 
+
 		Sentence.findAll().then(function(sentences) {
-			res.render('dashboard', {sentences: sentences});
+			// pegar todas as sentenças e agrupar por resultado, fazendo uma contagem e retornar para view
+			Sentence.findAll({
+				attributes: ['resultado', [Sequelize.fn('COUNT', Sequelize.col('resultado')), 'count']],
+				group: ['resultado']
+			}).then(function(results) {
+
+				const resultsArray = results.map(function(result) {
+					return result.dataValues;
+				})
+
+				console.log(resultsArray)
+
+				res.render('dashboard', {sentences: sentences, results: resultsArray});
+			})
+
 		})
 
 	}
 
 	this.adicionarView = function(req, res) {
 		res.render('adicionar', {errors: []});
+	}
+
+	this.editView = function(req, res) {
+
+		Sentence.findOne({
+			where: {
+				id: req.params.id
+			}
+		}).then(function(sentence) {
+			res.render('editar', {sentence: sentence});
+		})
+	}
+
+	this.edit = function(req, res) {
+
+		Sentence.update({
+			teor: req.body.teor,
+			numeroProcesso: req.body.numero_processo,
+			julgador: req.body.julgador,
+		}, {
+			where: {
+				id: req.params.id
+			}
+		}).then(function() {
+			req.flash('success', 'Sentença editada com sucesso');
+			res.redirect('/editar/' + req.params.id);
+		});
+		
 	}
 
 	this.adicionarSentenca = function(req, res) {

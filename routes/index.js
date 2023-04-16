@@ -11,7 +11,9 @@ module.exports = function(app){
     check('julgador').not().isEmpty().withMessage('O campo julgador é obrigatório'),
   ], app.controllers.HomeController.adicionarSentenca);
   app.get('/avaliar', app.controllers.HomeController.avaliarView);
-
+  
+  app.get('/editar/:id', app.controllers.HomeController.editView);
+  app.post('/editar/:id', app.controllers.HomeController.edit);
 
   app.get('/delete/:id', app.controllers.HomeController.delete);
 

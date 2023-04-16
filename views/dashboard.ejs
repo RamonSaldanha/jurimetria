@@ -37,6 +37,10 @@
       <div class="content">
         <div class="container-fluid">
           <br />
+          <div class="d-flex align-items-center" style="width: 300px;">
+            <canvas class="m-auto" id="myChart"></canvas>
+          </div>
+
           <h3 class="ask text-center my-4 mt-4">
             <!-- show localstorage item ask in EJS -->
           </h3>
@@ -78,7 +82,8 @@
 
                         <td><%- sentence.teor.substring(0, 50) %> (...)</td>
                         <td class="not-print">
-                          <a href="/delete/<%= sentence.id %>" class="btn btn-sm btn-danger">Excluir</a>
+                          <a href="/editar/<%= sentence.id %>" class="btn btn-sm btn-primary">Editar</a>
+                          <a href="#" id="excuir" onclick="excluir(<%= sentence.id %>)" class="btn btn-sm btn-danger">Excluir</a>
                         </td>
                       </tr>
                     <% }); %>
@@ -107,7 +112,72 @@
     <!-- Bootstrap 4 -->
     <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="assets/js/adminlte.min.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+      const data = <%- JSON.stringify(results) %>;
+
+      // verificar se existem 3 objetos no data, senão, acrescentar até que chegue em 3 objetos, com valor 0
+      if (data.length < 3) {
+        for (let i = data.length; i < 3; i++) {
+          data.push({ count: 0 });
+        }
+      }
+      console.log(data)
+      
+
+      const ctx = document.getElementById('myChart').getContext('2d');
+
+      const myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Gostei', 'Não gostei', 'Não se aplica'],
+          datasets: [{
+            label: 'Resultado',
+            data: [data[0].count, data[1].count, data[2].count],
+            backgroundColor: [
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 206, 86, 0.2)'
+            ],
+            borderColor: [
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+
+      function excluir ( id ) {
+   // redirect to delete route if click
+        // call sweet alert confirm message
+        Swal.fire({
+          title: 'Tem certeza?',
+          text: "Você não poderá reverter isso!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sim, excluir!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // if confirm delete, redirect to delete route
+            window.location.href = '/delete/' + id;
+          }
+        })
+      }
+    </script>
   </body>
 </html>
